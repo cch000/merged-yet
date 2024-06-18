@@ -38,7 +38,7 @@ fn main() {
     let found_str = match args.scripting {
         true => String::from("true"),
         false => format!(
-            "Pull request number: #{} has  been merged yet into {}",
+            "pr #{} has been merged into {}",
             pr_number, branch
         ),
     };
@@ -46,7 +46,7 @@ fn main() {
     let not_found_str = match args.scripting {
         true => String::from("false"),
         false => format!(
-            "Pull request number: #{} has not been merged yet into {}",
+            "pr #{} has not been merged yet into {}",
             pr_number, branch
         ),
     };
