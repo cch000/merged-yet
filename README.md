@@ -39,10 +39,11 @@ cargo run -- [OPTIONS] <PR_NUMBER>
 ## Options
 
 ```
--b, --branch <BRANCH>        Branch in which to look for the pull request [default: nixos-unstable]
--m, --max-pages <MAX_PAGES>  Each page is one request. If the pr was not found, try increasing this value [default: 5]
--s, --scripting              Whether to output script-friendly values
--h, --help                   Print help
--V, --version                Print version
+  -b, --branch <BRANCH>        Branch in which to look for the pull request [default: nixos-unstable]
+  -m, --max-pages <MAX_PAGES>  Each page is one request [default: if no key was provided 5, else 70]
+  -s, --scripting              Whether to output script-friendly values
+  -k, --key <KEY>              Github api key
+  -h, --help                   Print help
+  -V, --version                Print version
 
 ```

@@ -15,13 +15,16 @@ struct Args {
     branch: String,
 
     #[arg(short, long)]
-    #[arg(default_value_t = 5)]
-    ///Each page is one request. If the pr was not found, try increasing this value.
-    max_pages: u8,
+    ///Each page is one request [default: if no key was provided 5, else 70] 
+    max_pages: Option<u16>,
 
     #[arg(short, long)]
     ///Whether to output script-friendly values
     scripting: bool,
+
+    #[arg(short, long)]
+    /// Github api key
+    key: Option<String>,
 
     pr_number: u32,
 }
@@ -31,24 +34,30 @@ fn main() {
 
     let branch = args.branch;
     let pr_number = args.pr_number;
-    let max_pages = args.max_pages;
+    let key = args.key;
 
-    let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch);
+    //Set defaults or use the provided max_pages
+    let max_pages = if args.max_pages.is_none() {
+        //More requests by default if an api key was provided
+        if key.is_some() {
+            70
+        } else {
+            5
+        }
+    } else {
+        args.max_pages.unwrap()
+    };
+
+    let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch, key);
 
     let found_str = match args.scripting {
         true => String::from("true"),
-        false => format!(
-            "pr #{} has been merged into {}",
-            pr_number, branch
-        ),
+        false => format!("pr #{} has been merged into {}", pr_number, branch),
     };
 
     let not_found_str = match args.scripting {
         true => String::from("false"),
-        false => format!(
-            "pr #{} has not been merged yet into {}",
-            pr_number, branch
-        ),
+        false => format!("pr #{} has not been merged yet into {}", pr_number, branch),
     };
 
     if pr_found {

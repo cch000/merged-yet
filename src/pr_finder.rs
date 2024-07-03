@@ -14,12 +14,16 @@ struct Object {
     commit: Commit,
 }
 
-
-pub fn find_pr(pr_number: u32, max_pages : u8, branch: &str,) -> bool {
-
+pub fn find_pr(pr_number: u32, max_pages: u16, branch: &str, key: Option<String>) -> bool {
     let mut headers = HeaderMap::new();
 
     headers.insert("User-agent", HeaderValue::from_static("curl"));
+
+    if key.is_some() {
+        let key = format!("Bearer {}", key.unwrap());
+
+        headers.insert("Authorization", HeaderValue::from_str(&key).unwrap());
+    }
 
     let client: Client = reqwest::blocking::Client::builder()
         .default_headers(headers)
