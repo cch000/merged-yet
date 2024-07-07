@@ -1,5 +1,5 @@
 {
-  description = "Service to limit power consumption on ryzen cpus";
+  description = "Simple tool to find out if a pr was merged into a nixpkgs branch. Uses the github api";
 
   # All inputs for the system
   inputs = {
@@ -8,8 +8,10 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
   outputs = {flake-parts, ...} @ inputs:
-    flake-parts.lib.mkFlake {inherit inputs;} ({...}: {
-      systems = ["x86_64-linux"];
+    flake-parts.lib.mkFlake {inherit inputs;} (_: let
+      systems = ["x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin"];
+    in {
+      inherit systems;
 
       imports = [
         inputs.treefmt-nix.flakeModule
@@ -40,7 +42,7 @@
           meta = with lib; {
             maintainers = [maintainers.cch000];
             mainProgram = name;
-            platforms = ["x86_64-linux"];
+            platforms = systems;
             license = licenses.gpl3Plus;
           };
         };
