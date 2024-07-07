@@ -14,15 +14,15 @@ struct Object {
     commit: Commit,
 }
 
-pub fn find_pr(pr_number: u32, max_pages: u16, branch: &str, key: Option<String>) -> bool {
+pub fn find_pr(pr_number: u32, max_pages: u16, branch: &str, api_key: Option<String>) -> bool {
     let mut headers = HeaderMap::new();
 
     headers.insert("User-agent", HeaderValue::from_static("curl"));
 
-    if key.is_some() {
-        let key = format!("Bearer {}", key.unwrap());
+    if api_key.is_some() {
+        let val = format!("Bearer {}", api_key.unwrap());
 
-        headers.insert("Authorization", HeaderValue::from_str(&key).unwrap());
+        headers.insert("Authorization", HeaderValue::from_str(&val).unwrap());
     }
 
     let client: Client = reqwest::blocking::Client::builder()
@@ -62,7 +62,8 @@ pub fn find_pr(pr_number: u32, max_pages: u16, branch: &str, key: Option<String>
 
         for object in res_json {
             let message = object.commit.message;
-            if message.contains(format!("#{}", pr_number).as_str()) {
+
+            if message.contains(&pr_number.to_string()) {
                 pr_found = true;
                 break;
             }

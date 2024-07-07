@@ -15,7 +15,7 @@ struct Args {
     branch: String,
 
     #[arg(short, long)]
-    ///Each page is one request [default: if no key was provided 5, else 70] 
+    ///Each page is one request [default: if no key was provided 5, else 70]
     max_pages: Option<u16>,
 
     #[arg(short, long)]
@@ -24,7 +24,7 @@ struct Args {
 
     #[arg(short, long)]
     /// Github api key
-    key: Option<String>,
+    api_key: Option<String>,
 
     pr_number: u32,
 }
@@ -34,7 +34,7 @@ fn main() {
 
     let branch = args.branch;
     let pr_number = args.pr_number;
-    let key = args.key;
+    let key = args.api_key;
 
     //Set defaults or use the provided max_pages
     let max_pages = if args.max_pages.is_none() {
