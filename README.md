@@ -40,9 +40,10 @@ cargo run -- [OPTIONS] <PR_NUMBER>
 
 ```
   -b, --branch <BRANCH>        Branch in which to look for the pull request [default: nixos-unstable]
-  -m, --max-pages <MAX_PAGES>  Each page is one request [default: if no key was provided 5, else 70]
+  -m, --max-pages <MAX_PAGES>  Each page is one request [default: if no key was provided 5, else 100]
   -s, --scripting              Whether to output script-friendly values
   -a, --api-key <API_KEY>      Github api key
+  -t, --threads <THREADS>      Number of threads [default: MAX]
   -h, --help                   Print help
   -V, --version                Print version
 

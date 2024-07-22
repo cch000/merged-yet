@@ -1,5 +1,7 @@
 mod pr_finder;
 
+use std::thread;
+
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -15,8 +17,8 @@ struct Args {
     branch: String,
 
     #[arg(short, long)]
-    ///Each page is one request [default: if no key was provided 5, else 70]
-    max_pages: Option<u16>,
+    ///Each page is one request [default: if no key was provided 5, else 100]
+    max_pages: Option<u32>,
 
     #[arg(short, long)]
     ///Whether to output script-friendly values
@@ -25,6 +27,17 @@ struct Args {
     #[arg(short, long)]
     /// Github api key
     api_key: Option<String>,
+
+    #[arg(short, long)]
+    #[arg(
+        default_value_t = thread::available_parallelism()
+        .expect("could not get number of available threads")
+        .get()
+        .try_into()
+        .unwrap()
+    )]
+    ///Number of threads
+    threads: u32,
 
     pr_number: u32,
 }
@@ -35,12 +48,13 @@ fn main() {
     let branch = args.branch;
     let pr_number = args.pr_number;
     let key = args.api_key;
+    let threads = args.threads;
 
     //Set defaults or use the provided max_pages
     let max_pages = if args.max_pages.is_none() {
         //More requests by default if an api key was provided
         if key.is_some() {
-            70
+            100
         } else {
             5
         }
@@ -48,7 +62,7 @@ fn main() {
         args.max_pages.unwrap()
     };
 
-    let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch, key);
+    let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch, &key, threads);
 
     let found_str = match args.scripting {
         true => String::from("true"),
@@ -57,7 +71,10 @@ fn main() {
 
     let not_found_str = match args.scripting {
         true => String::from("false"),
-        false => format!("pr #{} has not been merged yet into {}", pr_number, branch),
+        false => format!(
+            "pr #{} could not be found in {}, try increasing the number of requests",
+            pr_number, branch
+        ),
     };
 
     if pr_found {
