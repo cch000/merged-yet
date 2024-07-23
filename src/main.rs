@@ -62,6 +62,11 @@ fn main() {
         args.max_pages.unwrap()
     };
 
+    if pr_number < 300000 {
+        println!("pr is too old");
+        return;
+    }
+
     let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch, &key, threads);
 
     let found_str = match args.scripting {
@@ -72,7 +77,7 @@ fn main() {
     let not_found_str = match args.scripting {
         true => String::from("false"),
         false => format!(
-            "pr #{} could not be found in {}, try increasing the number of requests",
+            "pr #{} could not be found in {}, increasing max-pages may help",
             pr_number, branch
         ),
     };

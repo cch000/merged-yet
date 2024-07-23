@@ -81,7 +81,9 @@ fn send_req(client: &Client, pr_number: u32, page_number: u32, branch: &str) -> 
     let res_json: Vec<Object> = res.json().unwrap();
 
     //Iterator that returns true if it finds a commit that contains the pr number
-    res_json
-        .iter()
-        .any(|o| o.commit.message.contains(&pr_number.to_string()))
+    res_json.iter().any(|o| {
+        o.commit
+            .message
+            .contains(&format!("#{}", &pr_number.to_string()))
+    })
 }
