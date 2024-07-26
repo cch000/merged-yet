@@ -26,7 +26,7 @@ Useful if you want to use it frequently or for scripting.
 ```Nix
 environment.systemPackages = [
   inputs.merged-yet.packages.merged-yet
-]
+];
 ```
 
 ### Non-Nix usage
@@ -42,6 +42,7 @@ cargo run -- [OPTIONS] <PR_NUMBER>
   -b, --branch <BRANCH>        Branch in which to look for the pull request [default: nixos-unstable]
   -m, --max-pages <MAX_PAGES>  Each page is one request [default: if no key was provided 5, else 100]
   -s, --scripting              Whether to output script-friendly values
+  -f, --full                   Whether to output if the pr was first merged into master
   -a, --api-key <API_KEY>      Github api key
   -t, --threads <THREADS>      Number of threads [default: MAX]
   -h, --help                   Print help

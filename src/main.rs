@@ -1,6 +1,6 @@
 mod pr_finder;
 
-use std::thread;
+use std::{process::ExitCode, thread};
 
 use clap::Parser;
 
@@ -25,6 +25,10 @@ struct Args {
     scripting: bool,
 
     #[arg(short, long)]
+    ///Whether to output if the pr was first merged into master
+    full: bool,
+
+    #[arg(short, long)]
     /// Github api key
     api_key: Option<String>,
 
@@ -42,7 +46,7 @@ struct Args {
     pr_number: u32,
 }
 
-fn main() {
+fn main() -> ExitCode {
     let args = Args::parse();
 
     let branch = args.branch;
@@ -64,27 +68,39 @@ fn main() {
 
     if pr_number < 300000 {
         println!("pr is too old");
-        return;
+        return ExitCode::from(1);
     }
 
-    let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch, &key, threads);
+    //Program output
+    if args.scripting {
+        let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch, &key, threads);
 
-    let found_str = match args.scripting {
-        true => String::from("true"),
-        false => format!("pr #{} has been merged into {}", pr_number, branch),
-    };
-
-    let not_found_str = match args.scripting {
-        true => String::from("false"),
-        false => format!(
-            "pr #{} could not be found in {}, increasing max-pages may help",
-            pr_number, branch
-        ),
-    };
-
-    if pr_found {
-        println!("{}", found_str);
+        if pr_found {
+            ExitCode::from(0)
+        } else {
+            ExitCode::from(1)
+        }
     } else {
-        println!("{}", not_found_str);
-    };
+        println!("#{}", pr_number);
+
+        if args.full {
+            let pr_master = pr_finder::find_pr(pr_number, max_pages, "master", &key, threads);
+
+            if pr_master {
+                println!("├ ✅ master");
+            } else {
+                println!("├ ❌ master");
+            }
+        }
+
+        let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch, &key, threads);
+
+        if pr_found {
+            println!("├ ✅ {}", branch);
+        } else {
+            println!("├ ❌ {}", branch);
+        };
+
+        ExitCode::from(0)
+    }
 }
