@@ -17,7 +17,7 @@ struct Object {
 }
 
 pub fn find_pr(
-    pr_number: u32,
+    pr_number: &str,
     max_pages: u32,
     branch: &str,
     api_key: &Option<String>,
@@ -69,7 +69,7 @@ pub fn find_pr(
     pr_found.load(Ordering::Relaxed)
 }
 
-fn send_req(client: &Client, pr_number: u32, page_number: u32, branch: &str) -> bool {
+fn send_req(client: &Client, pr_number: &str, page_number: u32, branch: &str) -> bool {
     let base_url = format!(
         "https://api.github.com/repos/NixOS/nixpkgs/commits?sha={branch}&per_page=100&page="
     );
@@ -78,12 +78,12 @@ fn send_req(client: &Client, pr_number: u32, page_number: u32, branch: &str) -> 
 
     let res = client.get(url).send().expect("error getting response");
 
-    let res_json: Vec<Object> = res.json().unwrap();
+    let res_json: Vec<Object> = res.json().expect("failed to parse json");
 
     //Iterator that returns true if it finds a commit that contains the pr number
     res_json.iter().any(|o| {
         o.commit
             .message
-            .contains(&format!("#{}", &pr_number.to_string()))
+            .contains(&format!("#{}", pr_number))
     })
 }

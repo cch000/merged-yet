@@ -43,7 +43,7 @@ struct Args {
     ///Number of threads
     threads: u32,
 
-    pr_number: u32,
+    pr_number: String,
 }
 
 fn main() -> ExitCode {
@@ -66,14 +66,17 @@ fn main() -> ExitCode {
         args.max_pages.unwrap()
     };
 
-    if pr_number < 300000 {
-        println!("pr is too old");
+    if pr_number.len() > 6 {
+        println!("given pr number is too long");
+        return ExitCode::from(1);
+    } else if pr_number.len() < 6 {
+        println!("given pr number is too short");
         return ExitCode::from(1);
     }
 
     //Program output
     if args.scripting {
-        let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch, &key, threads);
+        let pr_found = pr_finder::find_pr(&pr_number, max_pages, &branch, &key, threads);
 
         if pr_found {
             ExitCode::from(0)
@@ -84,7 +87,7 @@ fn main() -> ExitCode {
         println!("#{}", pr_number);
 
         if args.full {
-            let pr_master = pr_finder::find_pr(pr_number, max_pages, "master", &key, threads);
+            let pr_master = pr_finder::find_pr(&pr_number, max_pages, "master", &key, threads);
 
             if pr_master {
                 println!("├ ✅ master");
@@ -93,7 +96,7 @@ fn main() -> ExitCode {
             }
         }
 
-        let pr_found = pr_finder::find_pr(pr_number, max_pages, &branch, &key, threads);
+        let pr_found = pr_finder::find_pr(&pr_number, max_pages, &branch, &key, threads);
 
         if pr_found {
             println!("├ ✅ {}", branch);
