@@ -27,7 +27,7 @@ Useful if you want to use it frequently or for scripting.
 1. Add the flake to your system flake inputs:
 
 ```Nix
-merged-yet.url = "github:cch000/merged-yet;`
+merged-yet.url = "github:cch000/merged-yet";
 ```
 
 2. Add it to your packages
