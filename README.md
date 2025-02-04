@@ -6,7 +6,7 @@ Feel free to contribute!
 ## Usage
 
 ```console
-merged-yet -a $GITHUB_API_KEY -f 378069
+> merged-yet -a $GITHUB_API_KEY -f 378069
 #378069
 ├ ✅ master
 ├ ✅ nixos-unstable
@@ -17,20 +17,20 @@ merged-yet -a $GITHUB_API_KEY -f 378069
 #### Basic cli usage
 
 ```console
-nix run github:cch000/merged-yet -- [OPTIONS] <PR_NUMBER>
+> nix run github:cch000/merged-yet -- [OPTIONS] <PR_NUMBER>
 ```
 
 #### Adding it to your config
 
 Useful if you want to use it frequently or for scripting.
 
-1 Add the flake to your system flake inputs:
+1. Add the flake to your system flake inputs:
 
 ```Nix
 merged-yet.url = "github:cch000/merged-yet;`
 ```
 
-2 Add it to your packages
+2. Add it to your packages
 
 ```Nix
 environment.systemPackages = [
@@ -41,8 +41,8 @@ environment.systemPackages = [
 ### Non-Nix usage
 
 ```console
-git clone https://github.com/cch000/merged-yet
-cargo run -- [OPTIONS] <PR_NUMBER>
+> git clone https://github.com/cch000/merged-yet
+> cargo run -- [OPTIONS] <PR_NUMBER>
 ```
 
 ## Options
